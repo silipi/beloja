@@ -23,13 +23,13 @@ import {
 import { GoogleButton } from './google-button';
 import { Divider } from './divider';
 
-type Method = 'email' | 'telefone';
+type Method = 'email' | 'phone';
 
 const loginSchema = z
   .object({
-    method: z.enum(['email', 'telefone']),
+    method: z.enum(['email', 'phone']),
     email: z.string().trim(),
-    telefone: z.string(),
+    phone: z.string(),
     password: z.string().min(1, 'Informe sua senha'),
   })
   .superRefine((values, ctx) => {
@@ -48,19 +48,19 @@ const loginSchema = z
       }
     }
 
-    if (values.method === 'telefone') {
-      const phoneDigits = values.telefone.replace(/\D/g, '');
+    if (values.method === 'phone') {
+      const phoneDigits = values.phone.replace(/\D/g, '');
 
       if (!phoneDigits) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          path: ['telefone'],
+          path: ['phone'],
           message: 'Informe seu telefone',
         });
       } else if (phoneDigits.length < 10 || phoneDigits.length > 15) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
-          path: ['telefone'],
+          path: ['phone'],
           message: 'Telefone inválido',
         });
       }
@@ -77,7 +77,7 @@ export function LoginForm() {
     defaultValues: {
       method: 'email',
       email: '',
-      telefone: '',
+      phone: '',
       password: '',
     },
   });
@@ -132,9 +132,9 @@ export function LoginForm() {
         </button>
         <button
           type="button"
-          onClick={() => setMethod('telefone')}
+          onClick={() => setMethod('phone')}
           className={`flex-1 rounded-md py-2 text-sm font-medium transition-colors ${
-            method === 'telefone'
+            method === 'phone'
               ? 'bg-primary/10 text-primary'
               : 'text-muted-foreground hover:text-foreground'
           }`}
@@ -170,7 +170,7 @@ export function LoginForm() {
           ) : (
             <FormField
               control={form.control}
-              name="telefone"
+              name="phone"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Telefone</FormLabel>

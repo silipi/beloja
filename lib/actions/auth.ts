@@ -16,7 +16,7 @@ const loginEmailSchema = z.object({
 });
 
 const loginPhoneSchema = z.object({
-  telefone: z
+  phone: z
     .string()
     .regex(/^[0-9]{10,15}$/, 'Telefone inválido (somente números, com DDD)'),
   password: z.string().min(1, 'Senha obrigatória'),
@@ -81,11 +81,11 @@ export async function loginWithEmail(formData: FormData) {
 }
 
 export async function loginWithPhone(formData: FormData) {
-  const telefoneRaw = (formData.get('telefone') as string) ?? '';
-  const telefoneSoNumeros = telefoneRaw.replace(/[^0-9]/g, '');
+  const phoneRaw = (formData.get('phone') as string) ?? '';
+  const phoneDigits = phoneRaw.replace(/[^0-9]/g, '');
 
   const parsed = loginPhoneSchema.safeParse({
-    telefone: telefoneSoNumeros,
+    phone: phoneDigits,
     password: formData.get('password'),
   });
   if (!parsed.success) {
@@ -93,19 +93,19 @@ export async function loginWithPhone(formData: FormData) {
   }
 
   const supabase = await createClient();
-  const { data: emailEncontrado, error: rpcError } = await supabase.rpc(
-    'email_por_telefone',
+  const { data: emailFound, error: rpcError } = await supabase.rpc(
+    'email_by_phone',
     {
-      p_telefone: parsed.data.telefone,
+      p_phone: parsed.data.phone,
     },
   );
 
-  if (rpcError || !emailEncontrado) {
+  if (rpcError || !emailFound) {
     return { error: 'Telefone ou senha incorretos' };
   }
 
   const { error } = await supabase.auth.signInWithPassword({
-    email: emailEncontrado as string,
+    email: emailFound as string,
     password: parsed.data.password,
   });
   if (error) {

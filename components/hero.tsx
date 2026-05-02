@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
+import { WaitlistCTA } from '@/components/waitlist-cta';
 
 export function Hero() {
   return (
@@ -37,22 +38,15 @@ export function Hero() {
             </p>
 
             {/* CTAs */}
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Button className="bg-primary text-primary-foreground hover:bg-accent rounded-lg px-8 py-4 font-sans font-medium text-base h-auto transition-colors">
-                Criar minha loja grátis
-              </Button>
+            <div className="flex flex-col sm:flex-row gap-4 items-start">
+              <WaitlistCTA />
               <Button
                 variant="outline"
-                className="border-border hover:bg-secondary rounded-lg px-8 py-4 font-sans font-medium text-base h-auto transition-colors"
+                className="border-border hover:bg-secondary rounded-lg px-8 py-4 font-sans font-medium text-base h-auto transition-colors self-start"
               >
                 Ver como funciona
               </Button>
             </div>
-
-            {/* Trust signal */}
-            <p className="font-mono text-xs text-muted-foreground uppercase tracking-wider">
-              Grátis para sempre no plano básico · Sem cartão de crédito
-            </p>
           </div>
 
           {/* Right column — phone mockup */}

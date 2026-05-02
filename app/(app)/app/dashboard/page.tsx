@@ -12,12 +12,12 @@ export default async function DashboardPage() {
     redirect('/app/entrar');
   }
 
-  const { data: consultora } = await supabase
-    .from('consultoras')
+  const { data: consultant } = await supabase
+    .from('consultants')
     .select('*')
     .eq('user_id', user.id)
     .maybeSingle();
-  if (!consultora) {
+  if (!consultant) {
     redirect('/app/registrar/info');
   }
 
@@ -26,7 +26,7 @@ export default async function DashboardPage() {
       <div className="mx-auto max-w-3xl space-y-12">
         <section className="space-y-3">
           <p className="font-mono text-xs uppercase tracking-[0.2em] text-primary">
-            • Olá, {consultora.nome.split(' ')[0]}
+            • Olá, {consultant.name.split(' ')[0]}
           </p>
           <h1 className="font-display text-5xl font-light tracking-tight">
             Sua loja está <span className="italic text-primary">no ar</span>.
@@ -34,7 +34,7 @@ export default async function DashboardPage() {
           <p className="text-muted-foreground">
             Compartilhe seu link:{' '}
             <span className="font-mono text-foreground">
-              beloja.com.br/{consultora.slug}
+              beloja.com.br/{consultant.slug}
             </span>
           </p>
         </section>
@@ -46,19 +46,19 @@ export default async function DashboardPage() {
           <dl className="space-y-3 text-sm">
             <div className="flex justify-between">
               <dt className="text-muted-foreground">Nome</dt>
-              <dd className="font-medium">{consultora.nome}</dd>
+              <dd className="font-medium">{consultant.name}</dd>
             </div>
             <div className="flex justify-between">
               <dt className="text-muted-foreground">Email</dt>
-              <dd>{consultora.email}</dd>
+              <dd>{consultant.email}</dd>
             </div>
             <div className="flex justify-between">
               <dt className="text-muted-foreground">Telefone</dt>
-              <dd className="font-mono">{consultora.telefone}</dd>
+              <dd className="font-mono">{consultant.phone}</dd>
             </div>
             <div className="flex justify-between">
               <dt className="text-muted-foreground">Link da loja</dt>
-              <dd className="font-mono text-primary">/{consultora.slug}</dd>
+              <dd className="font-mono text-primary">/{consultant.slug}</dd>
             </div>
           </dl>
         </section>

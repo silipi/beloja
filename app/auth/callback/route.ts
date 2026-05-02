@@ -32,14 +32,14 @@ export async function GET(request: Request) {
   } = await supabase.auth.getUser();
 
   if (user) {
-    const { data: consultora } = await supabase
-      .from('consultoras')
+    const { data: consultant } = await supabase
+      .from('consultants')
       .select('id')
       .eq('user_id', user.id)
       .maybeSingle();
 
     // First access: the consultant profile does not exist yet.
-    if (!consultora) {
+    if (!consultant) {
       return NextResponse.redirect(`${origin}/app/registrar/info`);
     }
   }

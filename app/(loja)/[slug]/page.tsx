@@ -8,13 +8,13 @@ export default async function LojaPublicaPage({
 }) {
   const { slug } = await params;
   const supabase = await createClient();
-  const { data: consultora } = await supabase
-    .from('consultoras')
-    .select('nome, slug, bio, foto_url')
+  const { data: consultant } = await supabase
+    .from('consultants')
+    .select('name, slug, bio, avatar_url')
     .eq('slug', slug)
     .maybeSingle();
 
-  if (!consultora) {
+  if (!consultant) {
     notFound();
   }
 
@@ -27,7 +27,7 @@ export default async function LojaPublicaPage({
         <h1 className="font-display text-5xl font-light tracking-tight">
           A loja da{' '}
           <span className="italic text-primary">
-            {consultora.nome.split(' ')[0]}
+            {consultant.name.split(' ')[0]}
           </span>
         </h1>
         <p className="text-muted-foreground">

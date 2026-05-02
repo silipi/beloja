@@ -25,10 +25,10 @@ export function InfoForm() {
   return (
     <form action={handleSubmit} className="space-y-5">
       <div className="space-y-2">
-        <Label htmlFor="nome">Seu nome</Label>
+        <Label htmlFor="name">Seu nome</Label>
         <Input
-          id="nome"
-          name="nome"
+          id="name"
+          name="name"
           required
           minLength={2}
           maxLength={60}
@@ -40,10 +40,10 @@ export function InfoForm() {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="telefone">Telefone (com DDD)</Label>
+        <Label htmlFor="phone">Telefone (com DDD)</Label>
         <MaskedInput
-          id="telefone"
-          name="telefone"
+          id="phone"
+          name="phone"
           mask="(99) 99999-9999"
           required
           placeholder="(11) 98765-4321"

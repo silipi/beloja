@@ -4,13 +4,13 @@ import { createClient } from '@/lib/supabase/server';
  * Fetches a consultant by slug with all of their active products.
  * Used on public store pages: /loja/[slug]
  */
-export async function getConsultoraBySlug(slug: string) {
+export async function getConsultantBySlug(slug: string) {
   const supabase = await createClient();
   const { data, error } = await supabase
-    .from('consultoras')
-    .select('*, produtos(*)')
+    .from('consultants')
+    .select('*, products(*)')
     .eq('slug', slug)
-    .eq('produtos.ativo', true)
+    .eq('products.is_active', true)
     .single();
 
   if (error) {
@@ -23,7 +23,7 @@ export async function getConsultoraBySlug(slug: string) {
  * Returns the currently authenticated consultant.
  * Used on the consultant dashboard.
  */
-export async function getCurrentConsultora() {
+export async function getCurrentConsultant() {
   const supabase = await createClient();
   const {
     data: { user },
@@ -33,7 +33,7 @@ export async function getCurrentConsultora() {
   }
 
   const { data } = await supabase
-    .from('consultoras')
+    .from('consultants')
     .select('*')
     .eq('user_id', user.id)
     .single();
@@ -45,12 +45,12 @@ export async function getCurrentConsultora() {
  * Returns all orders for a consultant, newest first.
  * Includes each order's line items.
  */
-export async function getPedidosDaConsultora(consultoraId: string) {
+export async function getOrdersByConsultant(consultantId: string) {
   const supabase = await createClient();
   const { data, error } = await supabase
-    .from('pedidos')
-    .select('*, pedido_items(*)')
-    .eq('consultora_id', consultoraId)
+    .from('orders')
+    .select('*, order_items(*)')
+    .eq('consultant_id', consultantId)
     .order('created_at', { ascending: false });
 
   if (error) {
@@ -63,13 +63,13 @@ export async function getPedidosDaConsultora(consultoraId: string) {
  * Returns all products for a consultant.
  * No active filter, for use in the consultant's own dashboard.
  */
-export async function getProdutosDaConsultora(consultoraId: string) {
+export async function getProductsByConsultant(consultantId: string) {
   const supabase = await createClient();
   const { data, error } = await supabase
-    .from('produtos')
+    .from('products')
     .select('*')
-    .eq('consultora_id', consultoraId)
-    .order('posicao', { ascending: true });
+    .eq('consultant_id', consultantId)
+    .order('sort_order', { ascending: true });
 
   if (error) {
     return [];

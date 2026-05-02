@@ -12,12 +12,12 @@ export default async function InfoPage() {
     redirect('/app/registrar');
   }
 
-  const { data: consultora } = await supabase
-    .from('consultoras')
+  const { data: consultant } = await supabase
+    .from('consultants')
     .select('id')
     .eq('user_id', user.id)
     .maybeSingle();
-  if (consultora) {
+  if (consultant) {
     redirect('/app/dashboard');
   }
 
