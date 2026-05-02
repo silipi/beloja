@@ -12,6 +12,7 @@
     --popover: 42 47% 96%;
     --popover-foreground: 0 0% 4%;
     --primary: 46 65% 52%;
+    --primary-hover: 46 65% 42%;
     --primary-foreground: 0 0% 4%;
     --secondary: 40 30% 90%;
     --secondary-foreground: 0 0% 4%;
@@ -35,6 +36,7 @@
     --popover: 0 0% 4%;
     --popover-foreground: 40 47% 93%;
     --primary: 46 65% 52%;
+    --primary-hover: 46 65% 42%;
     --primary-foreground: 0 0% 4%;
     --secondary: 0 0% 12%;
     --secondary-foreground: 40 47% 93%;
@@ -62,6 +64,7 @@
   --color-popover: hsl(var(--popover));
   --color-popover-foreground: hsl(var(--popover-foreground));
   --color-primary: hsl(var(--primary));
+  --color-primary-hover: hsl(var(--primary-hover));
   --color-primary-foreground: hsl(var(--primary-foreground));
   --color-secondary: hsl(var(--secondary));
   --color-secondary-foreground: hsl(var(--secondary-foreground));

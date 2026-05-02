@@ -128,7 +128,7 @@ export function Pricing() {
               <Button
                 className={
                   plan.highlighted
-                    ? 'bg-primary text-primary-foreground hover:bg-accent rounded-lg px-6 py-3 font-sans font-medium h-auto transition-colors w-full'
+                    ? 'bg-primary text-primary-foreground hover:bg-primary-hover rounded-lg px-6 py-3 font-sans font-medium h-auto transition-colors w-full'
                     : 'border border-border hover:bg-secondary text-foreground rounded-lg px-6 py-3 font-sans font-medium h-auto transition-colors w-full bg-transparent'
                 }
               >

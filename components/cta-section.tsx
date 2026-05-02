@@ -30,7 +30,7 @@ export function CtaSection() {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 relative z-10">
-            <Button className="bg-primary text-primary-foreground hover:bg-accent rounded-lg px-8 py-4 font-sans font-medium text-base h-auto transition-colors">
+            <Button className="bg-primary text-primary-foreground hover:bg-primary-hover rounded-lg px-8 py-4 font-sans font-medium text-base h-auto transition-colors">
               Criar minha loja grátis
             </Button>
             <Button

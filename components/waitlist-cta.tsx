@@ -12,7 +12,7 @@ export function WaitlistCTA() {
     <>
       <div className="flex flex-col items-start gap-2">
         <Button
-          className="bg-primary text-primary-foreground hover:bg-accent px-8 py-6 text-base font-medium h-auto transition-all hover:shadow-[0_0_20px_hsl(var(--primary)/0.4)]"
+          className="bg-primary text-primary-foreground hover:bg-primary-hover px-8 py-4 text-base font-medium h-auto transition-all hover:shadow-[0_0_20px_hsl(var(--primary)/0.4)]"
           onClick={() => setOpen(true)}
         >
           <span

@@ -137,7 +137,7 @@ export function WaitlistForm({ form, onSubmit }: WaitlistFormProps) {
         {/* Submit */}
         <Button
           type="submit"
-          className="w-full bg-primary text-primary-foreground hover:bg-accent px-8 py-6 text-base font-medium h-auto mt-1"
+          className="w-full bg-primary text-primary-foreground hover:bg-primary-hover px-8 py-6 text-base font-medium h-auto mt-1"
           disabled={isSubmitting}
         >
           {isSubmitting ? (

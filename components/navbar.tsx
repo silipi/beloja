@@ -47,7 +47,7 @@ export function Navbar() {
           </Link>
           <Button
             asChild
-            className="bg-primary text-primary-foreground hover:bg-accent rounded-lg px-5 py-2 font-sans font-medium text-sm transition-colors"
+            className="bg-primary text-primary-foreground hover:bg-primary-hover rounded-lg px-5 py-2 font-sans font-medium text-sm transition-colors"
           >
             <Link href="/app/registrar">Criar minha loja</Link>
           </Button>
