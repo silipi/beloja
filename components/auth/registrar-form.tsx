@@ -1,25 +1,60 @@
 'use client';
 
 import { useState, useTransition } from 'react';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 import { Button } from '@/components/ui/button';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { registerWithEmail, loginWithGoogle } from '@/lib/actions/auth';
 import { GoogleButton } from './google-button';
 import { Divider } from './divider';
+
+const registerSchema = z.object({
+  email: z
+    .string()
+    .trim()
+    .min(1, 'Informe seu email')
+    .email('Email inválido'),
+  password: z.string().min(8, 'Senha deve ter no mínimo 8 caracteres'),
+});
+
+type RegisterFormValues = z.infer<typeof registerSchema>;
 
 export function RegistrarForm() {
   const [error, setError] = useState<string | null>(null);
   const [needsConfirm, setNeedsConfirm] = useState(false);
   const [isPending, startTransition] = useTransition();
+  const form = useForm<RegisterFormValues>({
+    resolver: zodResolver(registerSchema),
+    defaultValues: {
+      email: '',
+      password: '',
+    },
+  });
 
-  function handleSubmit(formData: FormData) {
+  function handleSubmit(values: RegisterFormValues) {
     setError(null);
+
+    const formData = new FormData();
+    formData.set('email', values.email);
+    formData.set('password', values.password);
+
     startTransition(async () => {
       const result = await registerWithEmail(formData);
+
       if (result?.error) {
         setError(result.error);
       }
+
       if (result?.needsEmailConfirmation) {
         setNeedsConfirm(true);
       }
@@ -50,41 +85,58 @@ export function RegistrarForm() {
         disabled={isPending}
       />
       <Divider>ou</Divider>
-      <form action={handleSubmit} className="space-y-4">
-        <div className="space-y-2">
-          <Label htmlFor="email">Email</Label>
-          <Input
-            id="email"
-            type="email"
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+          <FormField
+            control={form.control}
             name="email"
-            required
-            placeholder="seu@email.com"
-            className="h-12"
-            autoComplete="email"
-            disabled={isPending}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Email</FormLabel>
+                <FormControl>
+                  <Input
+                    type="email"
+                    placeholder="seu@email.com"
+                    className="h-12"
+                    autoComplete="email"
+                    disabled={isPending}
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
           />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="password">Senha</Label>
-          <Input
-            id="password"
-            type="password"
+
+          <FormField
+            control={form.control}
             name="password"
-            required
-            minLength={8}
-            placeholder="Mínimo 8 caracteres"
-            className="h-12"
-            autoComplete="new-password"
-            disabled={isPending}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Senha</FormLabel>
+                <FormControl>
+                  <Input
+                    type="password"
+                    placeholder="Mínimo 8 caracteres"
+                    className="h-12"
+                    autoComplete="new-password"
+                    disabled={isPending}
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
           />
-        </div>
-        <Button type="submit" className="h-12 w-full" disabled={isPending}>
-          {isPending ? 'Criando conta...' : 'Criar conta'}
-        </Button>
-        {error && (
-          <p className="text-center text-sm text-destructive">{error}</p>
-        )}
-      </form>
+
+          <Button type="submit" className="h-12 w-full" disabled={isPending}>
+            {isPending ? 'Criando conta...' : 'Criar conta'}
+          </Button>
+          {error && (
+            <p className="text-center text-sm text-destructive">{error}</p>
+          )}
+        </form>
+      </Form>
     </div>
   );
 }

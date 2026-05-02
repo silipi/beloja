@@ -1,9 +1,19 @@
 'use client';
 
 import { useState, useTransition } from 'react';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useForm, useWatch } from 'react-hook-form';
+import { z } from 'zod';
 import { Button } from '@/components/ui/button';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { MaskedInput } from '@/components/ui/masked-input';
 import {
   loginWithEmail,
@@ -15,16 +25,81 @@ import { Divider } from './divider';
 
 type Method = 'email' | 'telefone';
 
+const loginSchema = z
+  .object({
+    method: z.enum(['email', 'telefone']),
+    email: z.string().trim(),
+    telefone: z.string(),
+    password: z.string().min(1, 'Informe sua senha'),
+  })
+  .superRefine((values, ctx) => {
+    if (values.method === 'email') {
+      const parsedEmail = z
+        .string()
+        .min(1, 'Informe seu email')
+        .email('Email inválido')
+        .safeParse(values.email);
+
+      if (!parsedEmail.success) {
+        ctx.addIssue({
+          ...parsedEmail.error.issues[0],
+          path: ['email'],
+        });
+      }
+    }
+
+    if (values.method === 'telefone') {
+      const phoneDigits = values.telefone.replace(/\D/g, '');
+
+      if (!phoneDigits) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['telefone'],
+          message: 'Informe seu telefone',
+        });
+      } else if (phoneDigits.length < 10 || phoneDigits.length > 15) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['telefone'],
+          message: 'Telefone inválido',
+        });
+      }
+    }
+  });
+
+type LoginFormValues = z.infer<typeof loginSchema>;
+
 export function LoginForm() {
-  const [method, setMethod] = useState<Method>('email');
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
+  const form = useForm<LoginFormValues>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      method: 'email',
+      email: '',
+      telefone: '',
+      password: '',
+    },
+  });
+  const method = useWatch({ control: form.control, name: 'method' });
 
-  function handleSubmit(formData: FormData) {
+  function setMethod(method: Method) {
+    form.setValue('method', method);
+    form.clearErrors();
     setError(null);
+  }
+
+  function handleSubmit(values: LoginFormValues) {
+    setError(null);
+
+    const formData = new FormData();
+    formData.set('password', values.password);
+    formData.set(values.method, values[values.method]);
+
     startTransition(async () => {
-      const action = method === 'email' ? loginWithEmail : loginWithPhone;
+      const action = values.method === 'email' ? loginWithEmail : loginWithPhone;
       const result = await action(formData);
+
       if (result?.error) {
         setError(result.error);
       }
@@ -68,61 +143,84 @@ export function LoginForm() {
         </button>
       </div>
 
-      <form action={handleSubmit} className="space-y-4" key={method}>
-        {method === 'email' ? (
-          <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              type="email"
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+          {method === 'email' ? (
+            <FormField
+              control={form.control}
               name="email"
-              required
-              placeholder="seu@email.com"
-              className="h-12"
-              autoComplete="email"
-              disabled={isPending}
-              autoFocus
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Email</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="email"
+                      placeholder="seu@email.com"
+                      className="h-12"
+                      autoComplete="email"
+                      disabled={isPending}
+                      autoFocus
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
-        ) : (
-          <div className="space-y-2">
-            <Label htmlFor="telefone">Telefone</Label>
-            <MaskedInput
-              id="telefone"
+          ) : (
+            <FormField
+              control={form.control}
               name="telefone"
-              mask="(99) 99999-9999"
-              required
-              placeholder="(11) 98765-4321"
-              inputMode="numeric"
-              className="h-12"
-              autoComplete="tel"
-              disabled={isPending}
-              autoFocus
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Telefone</FormLabel>
+                  <FormControl>
+                    <MaskedInput
+                      mask="(99) 99999-9999"
+                      placeholder="(11) 98765-4321"
+                      inputMode="numeric"
+                      className="h-12"
+                      autoComplete="tel"
+                      disabled={isPending}
+                      autoFocus
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
             />
-          </div>
-        )}
+          )}
 
-        <div className="space-y-2">
-          <Label htmlFor="password">Senha</Label>
-          <Input
-            id="password"
-            type="password"
+          <FormField
+            control={form.control}
             name="password"
-            required
-            placeholder="Sua senha"
-            className="h-12"
-            autoComplete="current-password"
-            disabled={isPending}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Senha</FormLabel>
+                <FormControl>
+                  <Input
+                    type="password"
+                    placeholder="Sua senha"
+                    className="h-12"
+                    autoComplete="current-password"
+                    disabled={isPending}
+                    {...field}
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
           />
-        </div>
 
-        <Button type="submit" className="h-12 w-full" disabled={isPending}>
-          {isPending ? 'Entrando...' : 'Entrar'}
-        </Button>
-        {error && (
-          <p className="text-center text-sm text-destructive">{error}</p>
-        )}
-      </form>
+          <Button type="submit" className="h-12 w-full" disabled={isPending}>
+            {isPending ? 'Entrando...' : 'Entrar'}
+          </Button>
+          {error && (
+            <p className="text-center text-sm text-destructive">{error}</p>
+          )}
+        </form>
+      </Form>
     </div>
   );
 }
