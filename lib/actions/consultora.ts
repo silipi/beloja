@@ -1,9 +1,9 @@
-'use server'
+'use server';
 
-import { z } from 'zod'
-import { createClient } from '@/lib/supabase/server'
-import { redirect } from 'next/navigation'
-import { revalidatePath } from 'next/cache'
+import { z } from 'zod';
+import { createClient } from '@/lib/supabase/server';
+import { redirect } from 'next/navigation';
+import { revalidatePath } from 'next/cache';
 
 const infoSchema = z.object({
   nome: z.string().min(2, 'Nome muito curto').max(60, 'Nome muito longo'),
@@ -25,39 +25,42 @@ const infoSchema = z.object({
       /^[a-z0-9][a-z0-9-]{2,30}[a-z0-9]$/,
       'Use apenas letras minúsculas, números e hífen (4-32 caracteres, sem hífen no início ou fim)',
     ),
-})
+});
 
 export async function salvarInfoConsultora(formData: FormData) {
   const parsed = infoSchema.safeParse({
     nome: formData.get('nome'),
     telefone: formData.get('telefone'),
     slug: formData.get('slug'),
-  })
+  });
   if (!parsed.success) {
-    return { error: parsed.error.errors[0]?.message ?? 'Dados inválidos' }
+    return { error: parsed.error.errors[0]?.message ?? 'Dados inválidos' };
   }
 
-  const supabase = await createClient()
+  const supabase = await createClient();
   const {
     data: { user },
-  } = await supabase.auth.getUser()
-  if (!user || !user.email)
-    return { error: 'Sessão expirada. Faça login novamente.' }
+  } = await supabase.auth.getUser();
+  if (!user || !user.email) {
+    return { error: 'Sessão expirada. Faça login novamente.' };
+  }
 
   // If a profile already exists, send the consultant straight to the dashboard.
   const { data: existente } = await supabase
     .from('consultoras')
     .select('id')
     .eq('user_id', user.id)
-    .maybeSingle()
-  if (existente) redirect('/app/dashboard')
+    .maybeSingle();
+  if (existente) {
+    redirect('/app/dashboard');
+  }
 
   // Check slug availability.
   const { data: slugOk } = await supabase.rpc('slug_disponivel', {
     p_slug: parsed.data.slug,
-  })
+  });
   if (!slugOk) {
-    return { error: 'Esse link de loja não está disponível. Tenta outro.' }
+    return { error: 'Esse link de loja não está disponível. Tenta outro.' };
   }
 
   // Check phone uniqueness.
@@ -65,8 +68,10 @@ export async function salvarInfoConsultora(formData: FormData) {
     .from('consultoras')
     .select('id')
     .eq('telefone', parsed.data.telefone)
-    .maybeSingle()
-  if (phoneTaken) return { error: 'Esse telefone já tem cadastro.' }
+    .maybeSingle();
+  if (phoneTaken) {
+    return { error: 'Esse telefone já tem cadastro.' };
+  }
 
   const { error } = await supabase.from('consultoras').insert({
     user_id: user.id,
@@ -75,13 +80,13 @@ export async function salvarInfoConsultora(formData: FormData) {
     telefone: parsed.data.telefone,
     slug: parsed.data.slug,
     marcas: [],
-  })
+  });
 
   if (error) {
-    console.error('[consultora] insert error:', error)
-    return { error: 'Erro ao salvar. Tenta de novo?' }
+    console.error('[consultora] insert error:', error);
+    return { error: 'Erro ao salvar. Tenta de novo?' };
   }
 
-  revalidatePath('/app/dashboard')
-  redirect('/app/dashboard')
+  revalidatePath('/app/dashboard');
+  redirect('/app/dashboard');
 }

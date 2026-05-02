@@ -10,5 +10,5 @@ export function Divider({ children }: { children: React.ReactNode }) {
         </span>
       </div>
     </div>
-  )
+  );
 }

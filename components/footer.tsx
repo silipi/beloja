@@ -1,4 +1,4 @@
-import Link from 'next/link'
+import Link from 'next/link';
 
 const links: Record<string, { label: string; href: string }[]> = {
   Produto: [
@@ -24,7 +24,7 @@ const links: Record<string, { label: string; href: string }[]> = {
     { label: 'Privacidade', href: '#' },
     { label: 'Cookies', href: '#' },
   ],
-}
+};
 
 export function Footer() {
   return (
@@ -86,5 +86,5 @@ export function Footer() {
         </div>
       </div>
     </footer>
-  )
+  );
 }

@@ -1,10 +1,11 @@
-import type { Metadata } from 'next'
-import Link from 'next/link'
-import { format } from 'date-fns'
-import { ptBR } from 'date-fns/locale'
-import { getAllPosts } from '@/lib/blog'
-import { Navbar } from '@/components/navbar'
-import { Footer } from '@/components/footer'
+/* eslint-disable @next/next/no-img-element */
+import type { Metadata } from 'next';
+import Link from 'next/link';
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
+import { getAllPosts } from '@/lib/blog';
+import { Navbar } from '@/components/navbar';
+import { Footer } from '@/components/footer';
 
 export const metadata: Metadata = {
   title: 'Blog — Beloja',
@@ -22,10 +23,10 @@ export const metadata: Metadata = {
     description:
       'Dicas, novidades e histórias para consultoras de beleza que usam a Beloja para vender mais.',
   },
-}
+};
 
 export default async function BlogPage() {
-  const posts = await getAllPosts()
+  const posts = await getAllPosts();
 
   return (
     <>
@@ -58,7 +59,7 @@ export default async function BlogPage() {
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {posts.map((post) => {
-                  const href = `/blog/${post.slug.join('/')}`
+                  const href = `/blog/${post.slug.join('/')}`;
                   return (
                     <article
                       key={href}
@@ -118,7 +119,7 @@ export default async function BlogPage() {
                         </div>
                       </div>
                     </article>
-                  )
+                  );
                 })}
               </div>
             )}
@@ -127,5 +128,5 @@ export default async function BlogPage() {
       </main>
       <Footer />
     </>
-  )
+  );
 }

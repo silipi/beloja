@@ -1,133 +1,141 @@
-'use server'
+'use server';
 
-import { createClient } from '@/lib/supabase/server'
-import { redirect } from 'next/navigation'
-import { revalidatePath } from 'next/cache'
-import { z } from 'zod'
+import { createClient } from '@/lib/supabase/server';
+import { redirect } from 'next/navigation';
+import { revalidatePath } from 'next/cache';
+import { z } from 'zod';
 
 const registerSchema = z.object({
   email: z.string().email('Email inválido').toLowerCase(),
   password: z.string().min(8, 'Senha deve ter no mínimo 8 caracteres'),
-})
+});
 
 const loginEmailSchema = z.object({
   email: z.string().email('Email inválido').toLowerCase(),
   password: z.string().min(1, 'Senha obrigatória'),
-})
+});
 
 const loginPhoneSchema = z.object({
   telefone: z
     .string()
     .regex(/^[0-9]{10,15}$/, 'Telefone inválido (somente números, com DDD)'),
   password: z.string().min(1, 'Senha obrigatória'),
-})
+});
 
 export async function registerWithEmail(formData: FormData) {
   const parsed = registerSchema.safeParse({
     email: formData.get('email'),
     password: formData.get('password'),
-  })
+  });
   if (!parsed.success) {
-    return { error: parsed.error.errors[0]?.message ?? 'Dados inválidos' }
+    return { error: parsed.error.errors[0]?.message ?? 'Dados inválidos' };
   }
 
-  const supabase = await createClient()
+  const supabase = await createClient();
   const { error } = await supabase.auth.signUp({
     email: parsed.data.email,
     password: parsed.data.password,
     options: {
       emailRedirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback?next=/app/registrar/info`,
     },
-  })
+  });
 
   if (error) {
     if (error.message.includes('already registered')) {
-      return { error: 'Esse email já tem cadastro. Tenta fazer login.' }
+      return { error: 'Esse email já tem cadastro. Tenta fazer login.' };
     }
-    console.error('[auth] register error:', error)
-    return { error: 'Erro ao criar conta. Tenta de novo?' }
+    console.error('[auth] register error:', error);
+    return { error: 'Erro ao criar conta. Tenta de novo?' };
   }
 
   // If Supabase does not require email confirmation, the session already exists.
   const {
     data: { user },
-  } = await supabase.auth.getUser()
-  if (user) redirect('/app/registrar/info')
+  } = await supabase.auth.getUser();
+  if (user) {
+    redirect('/app/registrar/info');
+  }
 
-  return { success: true, needsEmailConfirmation: true }
+  return { success: true, needsEmailConfirmation: true };
 }
 
 export async function loginWithEmail(formData: FormData) {
   const parsed = loginEmailSchema.safeParse({
     email: formData.get('email'),
     password: formData.get('password'),
-  })
+  });
   if (!parsed.success) {
-    return { error: parsed.error.errors[0]?.message ?? 'Dados inválidos' }
+    return { error: parsed.error.errors[0]?.message ?? 'Dados inválidos' };
   }
 
-  const supabase = await createClient()
+  const supabase = await createClient();
   const { error } = await supabase.auth.signInWithPassword({
     email: parsed.data.email,
     password: parsed.data.password,
-  })
-  if (error) return { error: 'Email ou senha incorretos' }
+  });
+  if (error) {
+    return { error: 'Email ou senha incorretos' };
+  }
 
-  redirect('/app/dashboard')
+  redirect('/app/dashboard');
 }
 
 export async function loginWithPhone(formData: FormData) {
-  const telefoneRaw = (formData.get('telefone') as string) ?? ''
-  const telefoneSoNumeros = telefoneRaw.replace(/[^0-9]/g, '')
+  const telefoneRaw = (formData.get('telefone') as string) ?? '';
+  const telefoneSoNumeros = telefoneRaw.replace(/[^0-9]/g, '');
 
   const parsed = loginPhoneSchema.safeParse({
     telefone: telefoneSoNumeros,
     password: formData.get('password'),
-  })
+  });
   if (!parsed.success) {
-    return { error: parsed.error.errors[0]?.message ?? 'Dados inválidos' }
+    return { error: parsed.error.errors[0]?.message ?? 'Dados inválidos' };
   }
 
-  const supabase = await createClient()
+  const supabase = await createClient();
   const { data: emailEncontrado, error: rpcError } = await supabase.rpc(
     'email_por_telefone',
     {
       p_telefone: parsed.data.telefone,
     },
-  )
+  );
 
   if (rpcError || !emailEncontrado) {
-    return { error: 'Telefone ou senha incorretos' }
+    return { error: 'Telefone ou senha incorretos' };
   }
 
   const { error } = await supabase.auth.signInWithPassword({
     email: emailEncontrado as string,
     password: parsed.data.password,
-  })
-  if (error) return { error: 'Telefone ou senha incorretos' }
+  });
+  if (error) {
+    return { error: 'Telefone ou senha incorretos' };
+  }
 
-  redirect('/app/dashboard')
+  redirect('/app/dashboard');
 }
 
 export async function loginWithGoogle() {
-  const supabase = await createClient()
+  const supabase = await createClient();
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
     options: {
       redirectTo: `${process.env.NEXT_PUBLIC_SITE_URL}/auth/callback?next=/app/dashboard`,
     },
-  })
+  });
 
   if (error) {
-    console.error('[auth] google oauth error:', error)
-    return { error: 'Erro ao conectar com o Google' }
+    console.error('[auth] google oauth error:', error);
+    return { error: 'Erro ao conectar com o Google' };
   }
-  if (data.url) redirect(data.url)
+  if (data.url) {
+    redirect(data.url);
+  }
 }
 
 export async function signOut() {
-  const supabase = await createClient()
-  await supabase.auth.signOut()
-  revalidatePath('/', 'layout')
-  redirect('/app/entrar')
+  const supabase = await createClient();
+  await supabase.auth.signOut();
+  revalidatePath('/', 'layout');
+  redirect('/app/entrar');
 }

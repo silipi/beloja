@@ -1,20 +1,22 @@
-import { createClient } from '@/lib/supabase/server'
-import { notFound } from 'next/navigation'
+import { createClient } from '@/lib/supabase/server';
+import { notFound } from 'next/navigation';
 
 export default async function LojaPublicaPage({
   params,
 }: {
-  params: Promise<{ slug: string }>
+  params: Promise<{ slug: string }>;
 }) {
-  const { slug } = await params
-  const supabase = await createClient()
+  const { slug } = await params;
+  const supabase = await createClient();
   const { data: consultora } = await supabase
     .from('consultoras')
     .select('nome, slug, bio, foto_url')
     .eq('slug', slug)
-    .maybeSingle()
+    .maybeSingle();
 
-  if (!consultora) notFound()
+  if (!consultora) {
+    notFound();
+  }
 
   return (
     <main className="flex min-h-screen items-center justify-center px-6 py-12">
@@ -33,5 +35,5 @@ export default async function LojaPublicaPage({
         </p>
       </div>
     </main>
-  )
+  );
 }

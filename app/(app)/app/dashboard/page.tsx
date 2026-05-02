@@ -1,21 +1,25 @@
-import { createClient } from '@/lib/supabase/server'
-import { redirect } from 'next/navigation'
-import { signOut } from '@/lib/actions/auth'
-import { Button } from '@/components/ui/button'
+import { createClient } from '@/lib/supabase/server';
+import { redirect } from 'next/navigation';
+import { signOut } from '@/lib/actions/auth';
+import { Button } from '@/components/ui/button';
 
 export default async function DashboardPage() {
-  const supabase = await createClient()
+  const supabase = await createClient();
   const {
     data: { user },
-  } = await supabase.auth.getUser()
-  if (!user) redirect('/app/entrar')
+  } = await supabase.auth.getUser();
+  if (!user) {
+    redirect('/app/entrar');
+  }
 
   const { data: consultora } = await supabase
     .from('consultoras')
     .select('*')
     .eq('user_id', user.id)
-    .maybeSingle()
-  if (!consultora) redirect('/app/registrar/info')
+    .maybeSingle();
+  if (!consultora) {
+    redirect('/app/registrar/info');
+  }
 
   return (
     <main className="px-6 py-12">
@@ -77,5 +81,5 @@ export default async function DashboardPage() {
         </form>
       </div>
     </main>
-  )
+  );
 }

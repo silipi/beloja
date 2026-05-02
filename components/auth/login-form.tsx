@@ -1,31 +1,34 @@
-'use client'
+'use client';
 
-import { useState, useTransition } from 'react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
+import { useState, useTransition } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { MaskedInput } from '@/components/ui/masked-input';
 import {
   loginWithEmail,
   loginWithPhone,
   loginWithGoogle,
-} from '@/lib/actions/auth'
-import { GoogleButton } from './google-button'
-import { Divider } from './divider'
+} from '@/lib/actions/auth';
+import { GoogleButton } from './google-button';
+import { Divider } from './divider';
 
-type Method = 'email' | 'telefone'
+type Method = 'email' | 'telefone';
 
 export function LoginForm() {
-  const [method, setMethod] = useState<Method>('email')
-  const [error, setError] = useState<string | null>(null)
-  const [isPending, startTransition] = useTransition()
+  const [method, setMethod] = useState<Method>('email');
+  const [error, setError] = useState<string | null>(null);
+  const [isPending, startTransition] = useTransition();
 
   function handleSubmit(formData: FormData) {
-    setError(null)
+    setError(null);
     startTransition(async () => {
-      const action = method === 'email' ? loginWithEmail : loginWithPhone
-      const result = await action(formData)
-      if (result?.error) setError(result.error)
-    })
+      const action = method === 'email' ? loginWithEmail : loginWithPhone;
+      const result = await action(formData);
+      if (result?.error) {
+        setError(result.error);
+      }
+    });
   }
 
   return (
@@ -33,7 +36,7 @@ export function LoginForm() {
       <GoogleButton
         onClick={() =>
           startTransition(() => {
-            void loginWithGoogle()
+            void loginWithGoogle();
           })
         }
         disabled={isPending}
@@ -84,11 +87,12 @@ export function LoginForm() {
         ) : (
           <div className="space-y-2">
             <Label htmlFor="telefone">Telefone</Label>
-            <Input
+            <MaskedInput
               id="telefone"
               name="telefone"
+              mask="(99) 99999-9999"
               required
-              placeholder="11987654321"
+              placeholder="(11) 98765-4321"
               inputMode="numeric"
               className="h-12"
               autoComplete="tel"
@@ -120,5 +124,5 @@ export function LoginForm() {
         )}
       </form>
     </div>
-  )
+  );
 }

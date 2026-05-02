@@ -1,5 +1,5 @@
-import { createClient } from '@supabase/supabase-js'
-import type { Database } from '@/lib/supabase/types'
+import { createClient } from '@supabase/supabase-js';
+import type { Database } from '@/lib/supabase/types';
 
 /**
  * Creates a Supabase client with the Service Role Key, bypassing RLS.
@@ -17,5 +17,5 @@ export function createAdminClient() {
         persistSession: false,
       },
     },
-  )
+  );
 }

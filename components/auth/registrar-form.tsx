@@ -1,25 +1,29 @@
-'use client'
+'use client';
 
-import { useState, useTransition } from 'react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { registerWithEmail, loginWithGoogle } from '@/lib/actions/auth'
-import { GoogleButton } from './google-button'
-import { Divider } from './divider'
+import { useState, useTransition } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { registerWithEmail, loginWithGoogle } from '@/lib/actions/auth';
+import { GoogleButton } from './google-button';
+import { Divider } from './divider';
 
 export function RegistrarForm() {
-  const [error, setError] = useState<string | null>(null)
-  const [needsConfirm, setNeedsConfirm] = useState(false)
-  const [isPending, startTransition] = useTransition()
+  const [error, setError] = useState<string | null>(null);
+  const [needsConfirm, setNeedsConfirm] = useState(false);
+  const [isPending, startTransition] = useTransition();
 
   function handleSubmit(formData: FormData) {
-    setError(null)
+    setError(null);
     startTransition(async () => {
-      const result = await registerWithEmail(formData)
-      if (result?.error) setError(result.error)
-      if (result?.needsEmailConfirmation) setNeedsConfirm(true)
-    })
+      const result = await registerWithEmail(formData);
+      if (result?.error) {
+        setError(result.error);
+      }
+      if (result?.needsEmailConfirmation) {
+        setNeedsConfirm(true);
+      }
+    });
   }
 
   if (needsConfirm) {
@@ -32,7 +36,7 @@ export function RegistrarForm() {
           Enviamos um link de confirmação. Abra-o pra ativar sua conta.
         </p>
       </div>
-    )
+    );
   }
 
   return (
@@ -40,7 +44,7 @@ export function RegistrarForm() {
       <GoogleButton
         onClick={() =>
           startTransition(() => {
-            void loginWithGoogle()
+            void loginWithGoogle();
           })
         }
         disabled={isPending}
@@ -82,5 +86,5 @@ export function RegistrarForm() {
         )}
       </form>
     </div>
-  )
+  );
 }

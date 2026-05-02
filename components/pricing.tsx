@@ -1,5 +1,5 @@
-import { Check } from 'lucide-react'
-import { Button } from '@/components/ui/button'
+import { Check } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 const plans = [
   {
@@ -47,7 +47,7 @@ const plans = [
     cta: 'Falar com a equipe',
     highlighted: false,
   },
-]
+];
 
 export function Pricing() {
   return (
@@ -139,5 +139,5 @@ export function Pricing() {
         </div>
       </div>
     </section>
-  )
+  );
 }

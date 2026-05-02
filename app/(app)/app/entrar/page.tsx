@@ -1,14 +1,17 @@
-import Link from 'next/link'
-import { redirect } from 'next/navigation'
-import { createClient } from '@/lib/supabase/server'
-import { LoginForm } from '@/components/auth/login-form'
+import Link from 'next/link';
+import { redirect } from 'next/navigation';
+import { createClient } from '@/lib/supabase/server';
+import { LoginForm } from '@/components/auth/login-form';
 
 export default async function EntrarPage() {
-  const supabase = await createClient()
+  const supabase = await createClient();
   const {
     data: { user },
-  } = await supabase.auth.getUser()
-  if (user) redirect('/app/dashboard')
+  } = await supabase.auth.getUser();
+
+  if (user) {
+    redirect('/app/dashboard');
+  }
 
   return (
     <main className="flex min-h-[calc(100vh-65px)] items-center justify-center px-6 py-12">
@@ -30,5 +33,5 @@ export default async function EntrarPage() {
         </p>
       </div>
     </main>
-  )
+  );
 }

@@ -1,0 +1,24 @@
+---
+description: Language rules for code comments and Brazilian user-facing text
+alwaysApply: true
+---
+
+# Language And Localization
+
+- Write all code comments in English, including inline comments, block comments, JSDoc/TSDoc, TODOs, and explanatory notes in source files.
+- Do not add Portuguese comments to the codebase. If you touch an existing Portuguese comment, translate it to English when it is directly related to your edit.
+- Keep user-facing page text in Brazilian Portuguese because the target audience is in Brazil.
+- Treat labels, headings, buttons, form helper text, validation messages, marketing copy, blog content, metadata titles/descriptions, and empty/error states as user-facing text.
+- Do not translate Brazilian Portuguese UI or content copy into English unless the user explicitly asks for an English-facing experience.
+
+```tsx
+// Good: explain implementation details in English.
+const formatter = new Intl.NumberFormat("pt-BR", {
+  style: "currency",
+  currency: "BRL",
+})
+
+export function CheckoutButton() {
+  return <button>Finalizar compra</button>
+}
+```

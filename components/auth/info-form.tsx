@@ -1,22 +1,25 @@
-'use client'
+'use client';
 
-import { useState, useTransition } from 'react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
-import { Label } from '@/components/ui/label'
-import { salvarInfoConsultora } from '@/lib/actions/consultora'
+import { useState, useTransition } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { MaskedInput } from '@/components/ui/masked-input';
+import { salvarInfoConsultora } from '@/lib/actions/consultora';
 
 export function InfoForm() {
-  const [error, setError] = useState<string | null>(null)
-  const [isPending, startTransition] = useTransition()
-  const [slug, setSlug] = useState('')
+  const [error, setError] = useState<string | null>(null);
+  const [isPending, startTransition] = useTransition();
+  const [slug, setSlug] = useState('');
 
   function handleSubmit(formData: FormData) {
-    setError(null)
+    setError(null);
     startTransition(async () => {
-      const result = await salvarInfoConsultora(formData)
-      if (result?.error) setError(result.error)
-    })
+      const result = await salvarInfoConsultora(formData);
+      if (result?.error) {
+        setError(result.error);
+      }
+    });
   }
 
   return (
@@ -38,11 +41,12 @@ export function InfoForm() {
 
       <div className="space-y-2">
         <Label htmlFor="telefone">Telefone (com DDD)</Label>
-        <Input
+        <MaskedInput
           id="telefone"
           name="telefone"
+          mask="(99) 99999-9999"
           required
-          placeholder="11987654321"
+          placeholder="(11) 98765-4321"
           inputMode="numeric"
           className="h-12"
           disabled={isPending}
@@ -78,5 +82,5 @@ export function InfoForm() {
       </Button>
       {error && <p className="text-center text-sm text-destructive">{error}</p>}
     </form>
-  )
+  );
 }

@@ -1,20 +1,25 @@
-import { redirect } from 'next/navigation'
-import { createClient } from '@/lib/supabase/server'
-import { InfoForm } from '@/components/auth/info-form'
+import { redirect } from 'next/navigation';
+import { createClient } from '@/lib/supabase/server';
+import { InfoForm } from '@/components/auth/info-form';
 
 export default async function InfoPage() {
-  const supabase = await createClient()
+  const supabase = await createClient();
   const {
     data: { user },
-  } = await supabase.auth.getUser()
-  if (!user) redirect('/app/registrar')
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect('/app/registrar');
+  }
 
   const { data: consultora } = await supabase
     .from('consultoras')
     .select('id')
     .eq('user_id', user.id)
-    .maybeSingle()
-  if (consultora) redirect('/app/dashboard')
+    .maybeSingle();
+  if (consultora) {
+    redirect('/app/dashboard');
+  }
 
   return (
     <main className="flex min-h-[calc(100vh-65px)] items-center justify-center px-6 py-12">
@@ -33,5 +38,5 @@ export default async function InfoPage() {
         <InfoForm />
       </div>
     </main>
-  )
+  );
 }

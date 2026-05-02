@@ -20,7 +20,7 @@ const testimonials = [
     role: 'Consultora Hinode · Fortaleza',
     initials: 'JS',
   },
-]
+];
 
 export function Testimonials() {
   return (
@@ -81,5 +81,5 @@ export function Testimonials() {
         </div>
       </div>
     </section>
-  )
+  );
 }

@@ -5,7 +5,7 @@ import {
   ShoppingBag,
   BarChart3,
   MessageCircle,
-} from 'lucide-react'
+} from 'lucide-react';
 
 const features = [
   {
@@ -44,7 +44,7 @@ const features = [
     description:
       'Você fica com 100% do que vender. Nenhuma comissão para a Beloja. Só uma mensalidade fixa e transparente.',
   },
-]
+];
 
 export function Features() {
   return (
@@ -75,7 +75,7 @@ export function Features() {
         {/* Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {features.map((feature) => {
-            const Icon = feature.icon
+            const Icon = feature.icon;
             return (
               <div
                 key={feature.title}
@@ -93,10 +93,10 @@ export function Features() {
                   </p>
                 </div>
               </div>
-            )
+            );
           })}
         </div>
       </div>
     </section>
-  )
+  );
 }

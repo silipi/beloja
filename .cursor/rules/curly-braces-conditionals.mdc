@@ -1,0 +1,19 @@
+---
+alwaysApply: true
+---
+
+# Curly Braces For Conditionals
+
+- Always wrap `if` statement bodies in curly braces, even for single-line returns or simple statements.
+- Do not use single-line `if` statements without braces.
+- Keep the statement body indented inside the block.
+
+```typescript
+// Bad
+if (condition) return value;
+
+// Good
+if (condition) {
+  return value;
+}
+```

@@ -1,31 +1,34 @@
-import type { Metadata } from 'next'
-import { notFound } from 'next/navigation'
-import Link from 'next/link'
-import { format } from 'date-fns'
-import { ptBR } from 'date-fns/locale'
-import { ArrowLeft } from 'lucide-react'
-import { getAllPosts, getPost } from '@/lib/blog'
-import { Navbar } from '@/components/navbar'
-import { Footer } from '@/components/footer'
+/* eslint-disable @next/next/no-img-element */
+import type { Metadata } from 'next';
+import { notFound } from 'next/navigation';
+import Link from 'next/link';
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
+import { ArrowLeft } from 'lucide-react';
+import { getAllPosts, getPost } from '@/lib/blog';
+import { Navbar } from '@/components/navbar';
+import { Footer } from '@/components/footer';
 
 interface PageProps {
-  params: Promise<{ slug: string[] }>
+  params: Promise<{ slug: string[] }>;
 }
 
 export async function generateStaticParams() {
-  const posts = await getAllPosts()
-  return posts.map((post) => ({ slug: post.slug }))
+  const posts = await getAllPosts();
+  return posts.map((post) => ({ slug: post.slug }));
 }
 
 export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
-  const { slug } = await params
-  const post = await getPost(slug)
+  const { slug } = await params;
+  const post = await getPost(slug);
 
-  if (!post) return { title: 'Post não encontrado — Blog Beloja' }
+  if (!post) {
+    return { title: 'Post não encontrado — Blog Beloja' };
+  }
 
-  const url = `https://beloja.com.br/blog/${slug.join('/')}`
+  const url = `https://beloja.com.br/blog/${slug.join('/')}`;
 
   return {
     title: `${post.title} — Blog Beloja`,
@@ -46,18 +49,20 @@ export async function generateMetadata({
       description: post.description,
       ...(post.cover && { images: [post.cover] }),
     },
-  }
+  };
 }
 
 export default async function BlogPostPage({ params }: PageProps) {
-  const { slug } = await params
-  const post = await getPost(slug)
+  const { slug } = await params;
+  const post = await getPost(slug);
 
-  if (!post) notFound()
+  if (!post) {
+    notFound();
+  }
 
   const formattedDate = format(new Date(post.date), "d 'de' MMMM 'de' yyyy", {
     locale: ptBR,
-  })
+  });
 
   const jsonLd = {
     '@context': 'https://schema.org',
@@ -72,7 +77,7 @@ export default async function BlogPostPage({ params }: PageProps) {
       name: 'Beloja',
       url: 'https://beloja.com.br',
     },
-  }
+  };
 
   return (
     <>
@@ -163,5 +168,5 @@ export default async function BlogPostPage({ params }: PageProps) {
       </main>
       <Footer />
     </>
-  )
+  );
 }
